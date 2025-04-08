@@ -78,6 +78,33 @@ const resolvers: IResolvers = {
       }
     },
 
+    refreshToken: async (_: unknown, { refresh_token }, { dataSources }): Promise<Response<LoginResponse>> => {
+      try {
+        return await dataSources.authService.refreshToken(refresh_token);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        return { success: false, statusCode: 500, message: "Failed to refresh token." };
+      }
+    },
+
+    validateToken: async (_: unknown, { access_token }, { dataSources }): Promise<Response<Response>> => {
+      try {
+        return await dataSources.authService.validateToken(access_token);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        return { success: false, statusCode: 500, message: "Failed to refresh token." };
+      }
+    },
+
+    logout: async (_: unknown, { refresh_token }, { dataSources }): Promise<Response<Response>> => {
+      try {
+        return await dataSources.authService.logout(refresh_token);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        return { success: false, statusCode: 500, message: "Failed to refresh token." };
+      }
+    },
+
     updateUser: async (_: any, { userID, updates }: { userID: string; updates: Partial<User> }, { datasources }): Promise<Response<User>> => {
       try {
         return await datasources.UserService.updateUser(userID, updates);
@@ -117,15 +144,6 @@ const resolvers: IResolvers = {
       }
     },
 
-    refreshToken: async (_: any, { refreshToken }: { refreshToken: string }, { datasources }): Promise<Response<String>> => {
-      try {
-        const token = await datasources.UserService.refreshToken(refreshToken);
-        return { success: true, statusCode: 200, message: "Token refreshed.", results: token };
-      } catch (error) {
-        console.error("Error refreshing token:", error);
-        return { success: false, statusCode: 500, message: "Failed to refresh token." };
-      }
-    },
 
     assignRole: async (_: any, { userID, roleID }: { userID: string; roleID: number }, { datasources }): Promise<Response<Boolean>> => {
       try {

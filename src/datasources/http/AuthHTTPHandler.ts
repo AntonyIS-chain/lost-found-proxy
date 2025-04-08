@@ -1,12 +1,13 @@
 import ParentClass from "./ParentClass";
 import axiosInstance from "../../utils/axiosInstance";
 import { AxiosError } from "axios";
-import { AuthServiceInterface, Response, User } from "../../types";
+import { AuthServiceInterface, Response, User, ValidateTokenResponse } from "../../types";
 
 interface AuthTokens {
   access_token: string;
   refresh_token: string
 }
+
 
 class AuthHTTPHandler extends ParentClass implements AuthServiceInterface{
     constructor() {
@@ -17,6 +18,7 @@ class AuthHTTPHandler extends ParentClass implements AuthServiceInterface{
     private async handleRequest<T>(request: Promise<{ data: T }>): Promise<Response<T>> {
         try {
             const response = await request;
+
             return {
                 success: true,
                 statusCode: 200,
@@ -24,6 +26,7 @@ class AuthHTTPHandler extends ParentClass implements AuthServiceInterface{
                 results: response.data,
             };
         } catch (error: any) {
+
             return this.handleErrorResponse(error);
         }
     }
@@ -40,20 +43,28 @@ class AuthHTTPHandler extends ParentClass implements AuthServiceInterface{
       );
     }
   
-    async refreshToken(refreshToken: string): Promise<Response<AuthTokens>> {
+    async refreshToken(refresh_token: string): Promise<Response<AuthTokens>> {
         return this.handleRequest(
-            axiosInstance.post<AuthTokens>("/auth/refresh-token", { refreshToken })
+            axiosInstance.post<AuthTokens>("/v1/api/auth/refresh-token", { refresh_token })
         );
     }
 
-    async logout(refreshToken: string): Promise<Response<void>> {
+    async validateToken(access_token: string): Promise<Response<ValidateTokenResponse>> {
         return this.handleRequest(
-            axiosInstance.post<void>("/auth/logout", { refreshToken })
+            axiosInstance.post<ValidateTokenResponse>("/v1/api/auth/validate-token", { access_token })
+        );
+    }
+
+
+    async logout(refresh_token: string): Promise<Response> {
+        console.log("TOKN",refresh_token )
+        return this.handleRequest(
+            axiosInstance.post<Response>("/v1/api/auth/logout", { refresh_token })
         );
     }
 
     protected handleErrorResponse(error: AxiosError): Response {
-        console.error("Error in API Request:", error);
+        // console.error("Error in API Request:", error);
 
         const statusCode = error.response?.status || 500;
         const message = (error.response?.data as { message?: string })?.message || "An unexpected error occurred";

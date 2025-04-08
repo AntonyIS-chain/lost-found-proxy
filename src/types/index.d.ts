@@ -17,6 +17,13 @@ export interface LoginResponse {
 
 
 
+export interface ValidateTokenResponse {
+  claims: boolean;
+  valid: boolean;
+}
+
+
+
 export interface Response<T = any> {
   success: boolean;
   statusCode: number;
@@ -46,6 +53,9 @@ export interface UserServiceInterface {
 export interface AuthServiceInterface {
   login(email: string, password:string): Promise<Response<LoginResponse>>;
   signup(user: User): Promise<Response<User>>;
+  refreshToken(refresh_token: string): Promise<Response<LoginResponse>>;
+  validateToken(access_token: string): Promise<Response<ValidateTokenResponse>>;
+  logout(refresh_token: string): Promise<Response>;
 }
 
 export interface DataSources {

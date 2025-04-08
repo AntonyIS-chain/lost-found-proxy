@@ -1,5 +1,5 @@
 import ParentClass from "./ParentClass";
-import { AuthServiceInterface, LoginResponse, Response, User } from "../types";
+import { AuthServiceInterface, LoginResponse, Response, User, ValidateTokenResponse } from "../types";
 import AuthHTTPHandler from "../datasources/http/AuthHTTPHandler";
 
 class AuthService extends ParentClass {
@@ -35,6 +35,48 @@ class AuthService extends ParentClass {
       };
     }
   }
+
+  async refreshToken(refreshToken: string): Promise<Response<LoginResponse>> {
+    try {
+
+      const response = await this.datasource.refreshToken(refreshToken);
+      return response;
+    } catch (error: any) {
+      return {
+        message: error.response?.data?.message || "Refresh token failed",
+        statusCode: error.response?.status || 500,
+        success: false,
+      };
+    }
+  }
+
+  async validateToken(access_token: string): Promise<Response<ValidateTokenResponse>> {
+    try {
+
+      const response = await this.datasource.validateToken(access_token);
+      return response;
+    } catch (error: any) {
+      return {
+        message: error.response?.data?.message || "Validate token access token failed",
+        statusCode: error.response?.status || 500,
+        success: false,
+      };
+    }
+  }
+
+  async logout(refreshToken: string): Promise<Response<LoginResponse>> {
+    try {
+      const response = await this.datasource.logout(refreshToken);
+      return response;
+    } catch (error: any) {
+      return {
+        message: error.response?.data?.message || "Refresh token failed",
+        statusCode: error.response?.status || 500,
+        success: false,
+      };
+    }
+  }
+
 }
 
 export default AuthService;

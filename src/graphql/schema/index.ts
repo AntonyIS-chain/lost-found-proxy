@@ -24,6 +24,12 @@ const typeDefs = gql`
     message: String
   }
 
+  type GeneralResponse {
+    success: Boolean!
+    statusCode: Int!
+    message: String
+  }
+
   type UserResponse implements Response {
     success: Boolean!
     statusCode: Int!
@@ -64,6 +70,14 @@ const typeDefs = gql`
     results: LoginResponse
   }
 
+  type RefreshTokenResponseType implements Response {
+    success: Boolean!
+    statusCode: Int!
+    message: String
+    claims: Boolean!
+    valid: Boolean!
+  }
+
   type Query {
     getUserByID(userID: ID!): UserResponse
     getUserByEmail(email: String!): UserResponse
@@ -86,7 +100,9 @@ const typeDefs = gql`
     deleteUser(adminID: ID!, userID: ID!): BooleanResponse
     deactivateUser(userID: ID!): BooleanResponse
     activateUser(userID: ID!): BooleanResponse
-    refreshToken(refreshToken: String!): StringResponse
+    refreshToken(refresh_token: String!): LoginResponseType
+    validateToken(access_token: String!): RefreshTokenResponseType
+    logout(refresh_token: String!): GeneralResponse
     assignRole(userID: ID!, roleID: Int!): BooleanResponse
     changePassword(userID: ID!, oldPassword: String!, newPassword: String!): BooleanResponse
     forgotPassword(email: String!): BooleanResponse
