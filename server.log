@@ -6050,3 +6050,4 @@
 2025-04-08T08:59:12.970Z [INFO]: OPTIONS /graphql 204 - 4ms
 2025-04-08T08:59:12.984Z [INFO]: GraphQL Request: Login
 2025-04-08T08:59:13.289Z [INFO]: POST /graphql 200 - 312ms
+2025-04-08T18:18:37.688Z [INFO]: 🚀 Server ready at http://localhost:5000/graphql
