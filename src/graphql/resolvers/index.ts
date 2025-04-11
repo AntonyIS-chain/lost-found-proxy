@@ -1,17 +1,38 @@
 import { IResolvers } from "@graphql-tools/utils";
-import { DataSources, LoginResponse, Response, User } from "../../types";
+import { DataSources, LoginResponse, Response, User, UserIdentityCard } from "../../types";
 
 const resolvers: IResolvers = {
   Query: {
-    listUsers: async (_: unknown, __: unknown, { datasources }): Promise<Response<User[]>> => {
+    listUsers: async (_: unknown, __: unknown, { dataSources }): Promise<Response<User[]>> => {
       try {
-        return await datasources.UserService.listUsers();
+        return await dataSources.UserService.listUsers();
       } catch (error) {
         console.error("Error fetching users:", error);
         return { success: false, statusCode: 500, message: "Failed to fetch users." };
       }
     },
 
+    getLostIds: async (_: unknown, __: unknown, { dataSources }): Promise<Response<UserIdentityCard[]>> => {
+
+      try {
+        return await dataSources.matchingService.getLostIds(); 
+      } catch (error) {
+        console.error("Error fetching lost IDs:", error);
+        return { success: false, statusCode: 500, message: "Failed to fetch lost IDs." };
+      }
+    },
+
+    getLostId: async (_: unknown, { id }, { dataSources }): Promise<Response<UserIdentityCard[]>> => {
+      try {
+        const res = await dataSources.matchingService.getLostId(id); 
+        return res
+      } catch (error) {
+        console.error("Error fetching lost IDs:", error);
+        return { success: false, statusCode: 500, message: "Failed to fetch lost IDs." };
+      }
+    },
+    
+    
     getUserByID: async (_: any, { userID }: { userID: string }, { datasources }): Promise<Response<User>> => {
       try {
         return await datasources.UserService.getUserByID(userID);
@@ -32,44 +53,32 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
-    signup: async (
-      _: unknown,
-      { firstName, lastName, email,phone, password },
-      { dataSources }
-    ): Promise<Response<User>> => {
+    signup: async ( _: unknown,{  email,role_name,role_id,password },{ dataSources }): Promise<Response<User>> => {
       try {
-        const roleMap = {
-          "User Admin": "some_role_id", // Replace with actual role ID
-        };
-    
-        const userPayload = {
-          FirstName: firstName, 
-          LastName: lastName,
-          Email: email,
-          Phone: phone,
-          Password: password, // Ensure backend hashes the password securely
-          RoleID: roleMap["User Admin"], // Dynamically assign role ID
-          RoleName: "User Admin",
-        };
-        const data = {
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "johndoe@example.com",
-          "phone": "+1234567890",
-          "password": "SecureP@ss123",
-          "roleId": "some_role_id",
-          "roleName": "User Admin"
+
+        const user:User =  {
+          email,
+          role_name, 
+          role_id,
+          password
         }
-        console.log("Sending payload:", JSON.stringify(data)); // Debugging
-    
-        return await dataSources.authService.signup(data);
+        
+       
+        console.log("Sending payload:", JSON.stringify(user)); // Debugging
+       
+        const response = await dataSources.authService.signup(user);
+        console.log("Response", response)
+        return response
       } catch (error) {
+        console.log("ERROR", error)
+
         console.error("Error registering user:", error);
         return { success: false, statusCode: 500, message: "Failed to register user." };
       }
     },
     
     login: async (_: unknown, { email, password }, { dataSources }): Promise<Response<LoginResponse>> => {
+      
       try {
         return await dataSources.authService.login(email, password);
       } catch (error) {

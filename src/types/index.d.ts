@@ -1,12 +1,12 @@
 export interface User {
   id?: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   phone?: string;
-  roleName?: "admin" | "user" | "moderator";
+  role_name?: "Administrator" | "Moderator" | "Guest";
   password?:string;
-  roleId?: number;
+  role_id?: 1 | 2 | 3 | 4;
   isActive?: boolean;
 }
 
@@ -22,6 +22,18 @@ export interface ValidateTokenResponse {
   valid: boolean;
 }
 
+
+
+export interface UserIdentityCard {
+  id: string;
+  id_number: string;
+  full_name: string;
+  location_found: string;
+  date_reported: string; 
+  status: 'pending' | 'found' | 'returned'; 
+  created_at: string; 
+  updated_at: string; 
+}
 
 
 export interface Response<T = any> {
@@ -58,7 +70,14 @@ export interface AuthServiceInterface {
   logout(refresh_token: string): Promise<Response>;
 }
 
+export interface MatchingServiceInterface {
+  getLostIds(): Promise<Response<UserIdentityCard>>;
+  getLostId(id: string): Promise<Response<UserIdentityCard>>;
+}
+
+
 export interface DataSources {
   UserService: UserServiceInterface;
   AuthService: AuthServiceInterface;
+  MatchingService: MatchingServiceInterface;
 }

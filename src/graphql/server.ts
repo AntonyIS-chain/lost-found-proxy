@@ -7,6 +7,7 @@ import loggerMiddleware from "../middlewares/loggerMiddleware";
 import logger from "../utils/logger";
 import UserService from "../services/UserService";
 import AuthService from "../services/AuthService";
+import MatchingService from "../services/MatchingService";
 
 
 dotenv.config();
@@ -16,13 +17,14 @@ const startServer = async () => {
 
   // Use the logger middleware
   app.use(loggerMiddleware);
-
+ 
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     dataSources: () => ({
       userService: new UserService(),
-      authService: new AuthService()
+      authService: new AuthService(),
+      matchingService: new MatchingService(),
     }),
     context: ({ req }) => {
       const operationName = req.body?.operationName;

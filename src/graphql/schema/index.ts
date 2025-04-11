@@ -2,21 +2,22 @@ import { gql } from "apollo-server-express";
 
 const typeDefs = gql`
   type User {
-    id: ID!
-    firstName: String!
-    lastName: String!
+    id: ID
+    firstName: String
+    lastName: String
     email: String
     phone: String
-    role: Role!
-    roleId: Int!
+    role_name:Role
+    role_id: Int
     isActive: Boolean!
   }
 
   enum Role {
-    ADMIN
-    USER
-    MODERATOR
+    AdministratorlastName
+    Guest
+    Moderator
   }
+
 
   interface Response {
     success: Boolean!
@@ -58,9 +59,15 @@ const typeDefs = gql`
     results: String
   }
 
+  type SessionUser {
+    id: String!
+    role: String!
+  }
+
   type LoginResponse {
     access_token: String!
     refresh_token: String!
+    session_user: SessionUser!
   }
 
   type LoginResponseType implements Response {
@@ -78,18 +85,48 @@ const typeDefs = gql`
     valid: Boolean!
   }
 
+  type UserIdentityCard {
+    id: ID!
+    id_number: String!
+    full_name: String!
+    location_found: String!
+    date_reported: String!
+    status: String!
+    created_at: String!
+    updated_at: String!
+  }
+
+  type UserIdentityCardsResponse implements Response {
+    success: Boolean!
+    statusCode: Int!
+    message: String
+    results : [UserIdentityCard]
+  }
+
+  type UserIdentityCardResponse implements Response {
+    success: Boolean!
+    statusCode: Int!
+    message: String!
+    results : UserIdentityCard
+  }
+
+
+
+  
+
+
+
   type Query {
     getUserByID(userID: ID!): UserResponse
     getUserByEmail(email: String!): UserResponse
     listUsers: UserListResponse
+    getLostIds: UserIdentityCardsResponse
+    getLostId(id: String!): UserIdentityCardResponse
   }
 
   type Mutation {
     signup(
-      first_name: String!
-      last_name: String!
       email: String!
-      phone: String!
       role_id: Int!
       role_name: String!
       password: String!
