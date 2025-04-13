@@ -5,14 +5,23 @@ export interface User {
   email?: string;
   phone?: string;
   role_name?: "Administrator" | "Moderator" | "Guest";
+  phone_number?: "Administrator" | "Moderator" | "Guest";
   password?:string;
   role_id?: 1 | 2 | 3 | 4;
   isActive?: boolean;
 }
 
-export interface LoginResponse {
+interface SessionUser {
+  id: string;
+  role: string;
+}
+
+export interface SessionResponse {
   access_token: string;
   refresh_token: string;
+  token_type:string;
+  expires_in: number;
+  session_user: SessionUser
 }
 
 
@@ -63,9 +72,9 @@ export interface UserServiceInterface {
 
 
 export interface AuthServiceInterface {
-  login(email: string, password:string): Promise<Response<LoginResponse>>;
-  signup(user: User): Promise<Response<User>>;
-  refreshToken(refresh_token: string): Promise<Response<LoginResponse>>;
+  login(email: string, password:string): Promise<Response<SessionResponse>>;
+  signup(user: User): Promise<Response<SessionResponse>>;
+  refreshToken(refresh_token: string): Promise<Response<SessionResponse>>;
   validateToken(access_token: string): Promise<Response<ValidateTokenResponse>>;
   logout(refresh_token: string): Promise<Response>;
 }

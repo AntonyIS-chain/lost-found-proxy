@@ -24,11 +24,11 @@ class MatchingHTTPHandler extends ParentClass implements MatchingServiceInterfac
     }
 
     async getLostIds(): Promise<Response<UserIdentityCard>> {
-        return this.handleRequest(axiosInstance.get<UserIdentityCard>("/v1/api/matching/lost",));
+        return this.handleRequest(axiosInstance.get<UserIdentityCard>("/v1/matching/lost",));
     }
 
     async getLostId(id: string): Promise<Response<UserIdentityCard>> {
-        return this.handleRequest(axiosInstance.get<UserIdentityCard>(`/v1/api/matching/lost/${id}`,));
+        return this.handleRequest(axiosInstance.get<UserIdentityCard>(`/v1/matching/lost/${id}`,));
     }
 
 

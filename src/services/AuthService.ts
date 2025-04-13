@@ -1,5 +1,5 @@
 import ParentClass from "./ParentClass";
-import { AuthServiceInterface, LoginResponse, Response, User, ValidateTokenResponse } from "../types";
+import { AuthServiceInterface, SessionResponse, Response, User, ValidateTokenResponse } from "../types";
 import AuthHTTPHandler from "../datasources/http/AuthHTTPHandler";
 
 class AuthService extends ParentClass {
@@ -10,7 +10,7 @@ class AuthService extends ParentClass {
     this.datasource = new AuthHTTPHandler();
   }
 
-  async login(email: string, password: string): Promise<Response<LoginResponse>> {
+  async login(email: string, password: string): Promise<Response<SessionResponse>> {
     try {
       const response = await this.datasource.login(email, password);
       return response;
@@ -23,7 +23,7 @@ class AuthService extends ParentClass {
     }
   }
 
-  async signup(user: User): Promise<Response<User>> {
+  async signup(user: User): Promise<Response<SessionResponse>> {
     try {
       const response = await this.datasource.signup(user);
       return response;
@@ -36,7 +36,7 @@ class AuthService extends ParentClass {
     }
   }
 
-  async refreshToken(refreshToken: string): Promise<Response<LoginResponse>> {
+  async refreshToken(refreshToken: string): Promise<Response<SessionResponse>> {
     try {
 
       const response = await this.datasource.refreshToken(refreshToken);
@@ -64,7 +64,7 @@ class AuthService extends ParentClass {
     }
   }
 
-  async logout(refreshToken: string): Promise<Response<LoginResponse>> {
+  async logout(refreshToken: string): Promise<Response<SessionResponse>> {
     try {
       const response = await this.datasource.logout(refreshToken);
       return response;

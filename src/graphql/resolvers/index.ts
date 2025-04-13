@@ -1,5 +1,5 @@
 import { IResolvers } from "@graphql-tools/utils";
-import { DataSources, LoginResponse, Response, User, UserIdentityCard } from "../../types";
+import { SessionResponse, Response, User, UserIdentityCard } from "../../types";
 
 const resolvers: IResolvers = {
   Query: {
@@ -53,19 +53,19 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
-    signup: async ( _: unknown,{  email,role_name,role_id,password },{ dataSources }): Promise<Response<User>> => {
+    signup: async ( _: unknown,{  email,role_name,role_id,password, phone_number},{ dataSources }): Promise<Response<User>> => {
       try {
 
         const user:User =  {
           email,
           role_name, 
           role_id,
+          phone_number,
           password
         }
         
        
-        console.log("Sending payload:", JSON.stringify(user)); // Debugging
-       
+        console.log("Sending payload:", JSON.stringify(user));      
         const response = await dataSources.authService.signup(user);
         console.log("Response", response)
         return response
@@ -77,7 +77,7 @@ const resolvers: IResolvers = {
       }
     },
     
-    login: async (_: unknown, { email, password }, { dataSources }): Promise<Response<LoginResponse>> => {
+    login: async (_: unknown, { email, password }, { dataSources }): Promise<Response<SessionResponse>> => {
       
       try {
         return await dataSources.authService.login(email, password);
@@ -87,7 +87,7 @@ const resolvers: IResolvers = {
       }
     },
 
-    refreshToken: async (_: unknown, { refresh_token }, { dataSources }): Promise<Response<LoginResponse>> => {
+    refreshToken: async (_: unknown, { refresh_token }, { dataSources }): Promise<Response<SessionResponse>> => {
       try {
         return await dataSources.authService.refreshToken(refresh_token);
       } catch (error) {
@@ -152,7 +152,6 @@ const resolvers: IResolvers = {
         return { success: false, statusCode: 500, message: "Failed to activate user.", results: false };
       }
     },
-
 
     assignRole: async (_: any, { userID, roleID }: { userID: string; roleID: number }, { datasources }): Promise<Response<Boolean>> => {
       try {

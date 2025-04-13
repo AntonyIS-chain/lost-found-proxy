@@ -60,7 +60,7 @@ const typeDefs = gql`
   }
 
   type SessionUser {
-    id: String!
+    user_id: String!
     role: String!
   }
 
@@ -70,7 +70,7 @@ const typeDefs = gql`
     session_user: SessionUser!
   }
 
-  type LoginResponseType implements Response {
+  type SessionResponse implements Response {
     success: Boolean!
     statusCode: Int!
     message: String
@@ -129,15 +129,16 @@ const typeDefs = gql`
       email: String!
       role_id: Int!
       role_name: String!
+      phone_number: String
       password: String!
-    ): UserResponse
+    ): SessionResponse
 
-    login(email: String!, password: String!): LoginResponseType
+    login(email: String!, password: String!): SessionResponse
     updateUser(userID: ID!, updates: UserUpdateInput!): UserResponse
     deleteUser(adminID: ID!, userID: ID!): BooleanResponse
     deactivateUser(userID: ID!): BooleanResponse
     activateUser(userID: ID!): BooleanResponse
-    refreshToken(refresh_token: String!): LoginResponseType
+    refreshToken(refresh_token: String!): SessionResponse
     validateToken(access_token: String!): RefreshTokenResponseType
     logout(refresh_token: String!): GeneralResponse
     assignRole(userID: ID!, roleID: Int!): BooleanResponse

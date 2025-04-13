@@ -1,7 +1,7 @@
 import ParentClass from "./ParentClass";
 import axiosInstance from "../../utils/axiosInstance";
 import { AxiosError } from "axios";
-import { AuthServiceInterface, Response, User, ValidateTokenResponse } from "../../types";
+import { AuthServiceInterface, Response, SessionResponse, User, ValidateTokenResponse } from "../../types";
 
 interface AuthTokens {
   access_token: string;
@@ -31,22 +31,22 @@ class AuthHTTPHandler extends ParentClass implements AuthServiceInterface{
         }
     }
 
-    async login(email: string, password: string): Promise<Response<AuthTokens>> {
+    async login(email: string, password: string): Promise<Response<SessionResponse>> {
         return this.handleRequest(
-            axiosInstance.post<AuthTokens>("/v1/api/auth/login", { email, password })
+            axiosInstance.post<SessionResponse>("/v1/auth/signin", { email, password })
         );
     }
 
-    async signup(user: User): Promise<Response<User>> {
+    async signup(user: User): Promise<Response<SessionResponse>> {
         
         return this.handleRequest(
-            axiosInstance.post<User>("/v1/api/users/signup", {...user })
+            axiosInstance.post<SessionResponse>("/v1/auth/signup", {...user })
         );
     }
   
-    async refreshToken(refresh_token: string): Promise<Response<AuthTokens>> {
+    async refreshToken(refresh_token: string): Promise<Response<SessionResponse>> {
         return this.handleRequest(
-            axiosInstance.post<AuthTokens>("/v1/api/auth/refresh-token", { refresh_token })
+            axiosInstance.post<SessionResponse>("/v1/api/auth/refresh-token", { refresh_token })
         );
     }
 
