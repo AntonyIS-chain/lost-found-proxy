@@ -8,12 +8,17 @@ import logger from "../utils/logger";
 import UserService from "../services/UserService";
 import AuthService from "../services/AuthService";
 import MatchingService from "../services/MatchingService";
+import graphqlUploadExpress from "graphql-upload";
 
 
 dotenv.config();
 
 const startServer = async () => {
   const app = express();
+
+
+  // 1️⃣ Enable file uploads
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
 
   // Use the logger middleware
   app.use(loggerMiddleware);

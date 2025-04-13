@@ -1,5 +1,5 @@
 import ParentClass from "./ParentClass";
-import { MatchingServiceInterface, Response, UserIdentityCard } from "../types";
+import { MatchingServiceInterface, Response, IDDocument } from "../types";
 import MatchingHTTPHandler from "../datasources/http/MatchingHTTPHandler";
 
 class MatchingService extends ParentClass {
@@ -11,20 +11,18 @@ class MatchingService extends ParentClass {
   }
 
 
-  async getLostIds(): Promise<Response<UserIdentityCard>> {
-    const response = await this.datasource.getLostIds()
-
-    return response;
+  async GetIDDocuments(idType:string): Promise<Response<IDDocument[]>> {
+    return  await this.datasource.GetIDDocuments(idType)
   }
 
-  async getLostId(id: string): Promise<Response<UserIdentityCard>> {
-    const response = await this.datasource.getLostId(id)
-
-    return response;
+  async GetIDDocument(idType:string, id: string): Promise<Response<IDDocument>> {
+    return await this.datasource.GetIDDocument(idType, id)
   }
 
+  async ReportID(doc:IDDocument,idType: string): Promise<Response<IDDocument>> {
+    return await this.datasource.ReportID(doc,idType)
+  }
 
- 
 }
 
 export default  MatchingService;

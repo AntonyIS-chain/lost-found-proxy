@@ -32,19 +32,6 @@ export interface ValidateTokenResponse {
 }
 
 
-
-export interface UserIdentityCard {
-  id: string;
-  id_number: string;
-  full_name: string;
-  location_found: string;
-  date_reported: string; 
-  status: 'pending' | 'found' | 'returned'; 
-  created_at: string; 
-  updated_at: string; 
-}
-
-
 export interface Response<T = any> {
   success: boolean;
   statusCode: number;
@@ -70,6 +57,21 @@ export interface UserServiceInterface {
   verifyEmail(token: string): Promise<Response<void>>;
 }
 
+export interface IDDocument {
+  id?: string;
+  id_number: string;
+  full_name?: string;
+  location?: string;
+  phone_number?: string;
+  email?: string;
+  date_reported: string; 
+  status: string;
+  file_path: string;
+  created_at: string; 
+  updated_at: string; 
+}
+
+
 
 export interface AuthServiceInterface {
   login(email: string, password:string): Promise<Response<SessionResponse>>;
@@ -80,8 +82,9 @@ export interface AuthServiceInterface {
 }
 
 export interface MatchingServiceInterface {
-  getLostIds(): Promise<Response<UserIdentityCard>>;
-  getLostId(id: string): Promise<Response<UserIdentityCard>>;
+  GetIDDocument(id: string, IDType: string): Promise<Response<IDDocument>>;
+  GetIDDocuments(IDType: string): Promise<Response<IDDocument[]>>;
+  ReportID(doc: IDDocument,idType: string): Promise<Response<IDDocument>>;
 }
 
 

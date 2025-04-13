@@ -1,4 +1,4 @@
-import { User, Response, MatchingServiceInterface, UserIdentityCard } from "../../types";
+import { Response, MatchingServiceInterface, IDDocument } from "../../types";
 import ParentClass from "./ParentClass";
 import axiosInstance from "../../utils/axiosInstance";
 import { AxiosError } from "axios";
@@ -23,16 +23,18 @@ class MatchingHTTPHandler extends ParentClass implements MatchingServiceInterfac
         }
     }
 
-    async getLostIds(): Promise<Response<UserIdentityCard>> {
-        return this.handleRequest(axiosInstance.get<UserIdentityCard>("/v1/matching/lost",));
+    async GetIDDocuments(idType:string): Promise<Response<IDDocument[]>> {
+        return this.handleRequest(axiosInstance.get<IDDocument[]>(`/v1/matching/${idType}`));
     }
 
-    async getLostId(id: string): Promise<Response<UserIdentityCard>> {
-        return this.handleRequest(axiosInstance.get<UserIdentityCard>(`/v1/matching/lost/${id}`,));
+    async GetIDDocument(idType:string,id: string): Promise<Response<IDDocument>> {
+        return this.handleRequest(axiosInstance.get<IDDocument>(`/v1/matching/${idType}/${id}`));
     }
 
+    async ReportID(doc:IDDocument,idType: string): Promise<Response<IDDocument>> {
+        return this.handleRequest(axiosInstance.post<IDDocument>(`/v1/matching/report/${idType}`, {... doc}));
+    }
 
-   
     protected handleErrorResponse(error: AxiosError): Response {
       console.error("Error in API Request:", error);
   

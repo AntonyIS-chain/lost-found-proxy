@@ -1,5 +1,5 @@
 import { IResolvers } from "@graphql-tools/utils";
-import { SessionResponse, Response, User, UserIdentityCard } from "../../types";
+import { SessionResponse, Response, User, IDDocument } from "../../types";
 
 const resolvers: IResolvers = {
   Query: {
@@ -11,28 +11,7 @@ const resolvers: IResolvers = {
         return { success: false, statusCode: 500, message: "Failed to fetch users." };
       }
     },
-
-    getLostIds: async (_: unknown, __: unknown, { dataSources }): Promise<Response<UserIdentityCard[]>> => {
-
-      try {
-        return await dataSources.matchingService.getLostIds(); 
-      } catch (error) {
-        console.error("Error fetching lost IDs:", error);
-        return { success: false, statusCode: 500, message: "Failed to fetch lost IDs." };
-      }
-    },
-
-    getLostId: async (_: unknown, { id }, { dataSources }): Promise<Response<UserIdentityCard[]>> => {
-      try {
-        const res = await dataSources.matchingService.getLostId(id); 
-        return res
-      } catch (error) {
-        console.error("Error fetching lost IDs:", error);
-        return { success: false, statusCode: 500, message: "Failed to fetch lost IDs." };
-      }
-    },
-    
-    
+        
     getUserByID: async (_: any, { userID }: { userID: string }, { datasources }): Promise<Response<User>> => {
       try {
         return await datasources.UserService.getUserByID(userID);
@@ -48,6 +27,24 @@ const resolvers: IResolvers = {
       } catch (error) {
         console.error(`Error fetching user with email ${email}:`, error);
         return { success: false, statusCode: 500, message: "Failed to fetch user." };
+      }
+    },
+
+    GetIDDocuments: async (_: unknown, { IDType }: { IDType: string }, { dataSources }): Promise<Response<IDDocument[]>> => {
+      try {
+        return await dataSources.matchingService.GetIDDocuments(IDType);
+      } catch (error) {
+        console.error("Error fetching ID documents:", error);
+        return { success: false, statusCode: 500, message: "Failed to fetch ID documents." };
+      }
+    },
+
+    GetIDDocument: async (_: unknown, { IDType, id }: { IDType: string, id: string }, { dataSources }): Promise<Response<IDDocument>> => {
+      try {
+        return await dataSources.matchingService.GetIDDocument(IDType, id);
+      } catch (error) {
+        console.error("Error fetching ID document:", error);
+        return { success: false, statusCode: 500, message: "Failed to fetch ID document." };
       }
     },
   },
@@ -202,6 +199,46 @@ const resolvers: IResolvers = {
         return { success: false, statusCode: 500, message: "Failed to verify email.", results: false };
       }
     },
+
+    ReportID: async ( _: unknown,{ doc, idType }: { doc: IDDocument; idType: string }, { dataSources }): Promise<Response> => {
+      try {
+        console.log("doc>>>>",doc)
+        return await dataSources.matchingService.ReportID(doc, idType);
+      } catch (error) {
+        console.error("Error reporting ID document:", error);
+        return {
+          success: false,
+          statusCode: 500,
+          message: "Failed to report ID document.",
+        };
+      }
+    },
+  
+    DeleteIDDocument: async (_: unknown,{ id, IDType }: { id: string; IDType: string }, { dataSources }): Promise<Response> => {
+      try {
+        return await dataSources.matchingService.deleteIDDocument(id, IDType);
+      } catch (error) {
+        console.error(`Error deleting ID document with ID ${id}:`, error);
+        return {
+          success: false,
+          statusCode: 500,
+          message: "Failed to delete ID document.",
+        };
+      }
+    },
+  
+  //   SaveMatch: async (_: unknown,{ input }: { input: MatchIDInput },{ dataSources }): Promise<BooleanResponse> => {
+  //     try {
+  //       return await dataSources.matchingService.saveMatch(input);
+  //     } catch (error) {
+  //       console.error("Error saving match:", error);
+  //       return {
+  //         success: false,
+  //         statusCode: 500,
+  //         message: "Failed to save match.",
+  //       };
+  //     }
+  //   },
   },
 };
 

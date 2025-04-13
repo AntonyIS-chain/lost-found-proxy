@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const typeDefs = gql`
+  scalar Upload
+
   type User {
     id: ID
     firstName: String
@@ -109,19 +111,89 @@ const typeDefs = gql`
     message: String!
     results : UserIdentityCard
   }
+  type IDDocument {
+    id: ID!
+    id_number: String!
+    full_name: String!
+    location: String
+    phone_number: String
+    email: String
+    date_reported: String!
+    status: String!
+    file_path: String
+    created_at: String!
+    updated_at: String!
+  }
 
+  type IDMatch {
+    id: ID!
+    lost_id_number: String!
+    found_id_number: String!
+    matched_by: String!
+    matched_at: String!
+    status: String!
+    created_at: String!
+    updated_at: String!
+  }
 
+  type IDDocumentResponse implements Response {
+    success: Boolean!
+    statusCode: Int!
+    message: String
+    results: IDDocument
+  }
 
-  
+  type IDDocumentsResponse implements Response {
+    success: Boolean!
+    statusCode: Int!
+    message: String
+    results: [IDDocument]
+  }
 
+  type IDMatchResponse implements Response {
+    success: Boolean!
+    statusCode: Int!
+    message: String
+    results: IDMatch
+  }
+
+  type IDMatchesResponse implements Response {
+    success: Boolean!
+    statusCode: Int!
+    message: String
+    results: [IDMatch]
+  }
+
+  input ReportIDInput {
+    id_number: String!
+    full_name: String!
+    location: String
+    phone_number: String
+    email: String
+    file_path: Upload
+    status: String!
+  }
+
+  input MatchIDInput {
+    lost_id_number: String!
+    found_id_number: String!
+    matched_by: String!
+    status: String!
+  }
 
 
   type Query {
     getUserByID(userID: ID!): UserResponse
     getUserByEmail(email: String!): UserResponse
     listUsers: UserListResponse
-    getLostIds: UserIdentityCardsResponse
-    getLostId(id: String!): UserIdentityCardResponse
+
+    # ID Document
+    GetIDDocuments(IDType: String!): IDDocumentsResponse
+    GetIDDocument(IDType: String!, id: String!): IDDocumentResponse
+
+    # ID Match
+    GetMatchByLostID(idNumber: String!): IDMatchResponse
+    GetMatched: IDMatchesResponse
   }
 
   type Mutation {
@@ -146,6 +218,13 @@ const typeDefs = gql`
     forgotPassword(email: String!): BooleanResponse
     resetPassword(token: String!, newPassword: String!): BooleanResponse
     verifyEmail(token: String!): BooleanResponse
+
+    # ID Document
+    ReportID(doc: ReportIDInput!,idType: String!): IDDocumentResponse
+    DeleteIDDocument(id: String!, IDType: String!): BooleanResponse
+
+    # Match
+    SaveMatch(input: MatchIDInput!): BooleanResponse
   }
 
   input UserUpdateInput {
